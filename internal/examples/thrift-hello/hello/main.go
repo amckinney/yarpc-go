@@ -42,15 +42,11 @@ import (
 	"go.uber.org/yarpc/transport/http"
 )
 
-var count int
-
-var flagWait = flag.Bool("wait", false, "Wait for a signal to exit")
-
-var flagRR = flag.Bool("round-robin", false, "Use round-robin instead of fewest-pending-requests load balancer")
-
-func init() {
-	flag.IntVar(&count, "count", 1, "How many requests to send, or -1 to run indefinitely")
-}
+var (
+	flagWait  = flag.Bool("wait", false, "Wait for a signal to exit")
+	flagRR    = flag.Bool("round-robin", false, "Use round-robin instead of fewest-pending-requests load balancer")
+	flagCount = flag.Int("count", 1, "How many requests to send, or -1 to run indefinitely")
+)
 
 func main() {
 	if err := do(); err != nil {
@@ -108,7 +104,7 @@ func do() error {
 	// using the dispatcher and associated "hello" outbound
 	client := helloclient.New(dispatcher.ClientConfig("hello"))
 
-	for i := 0; i != count; i++ {
+	for i := 0; i != *flagCount; i++ {
 		// build a context with a 1 second deadline
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 
